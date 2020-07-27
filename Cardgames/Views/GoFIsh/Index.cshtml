@@ -1,0 +1,7 @@
+﻿@model Match
+
+<h3>Choose a card to ask the computer for:</h3>
+@foreach(var c in Model.Player1.CardList)
+{
+   <a href ="/GoFish/CardPick?value=@c.Value"><img src=@c.Image></a>
+}

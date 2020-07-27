@@ -1,0 +1,26 @@
+﻿@model Cardgames.Models.Match
+
+<h3>Choose a card to ask the computer for:</h3>
+@foreach (var c in Model.Player1.CardList)
+{
+    <a href="/GoFish/CardPick?value=@c.Value"><img src=@c.Image></a>
+}
+
+
+<h3>Cards in your pile</h3>
+@if (Model.Player1.Pile.Count() > 0)
+{
+@foreach (var c in Model.Player1.Pile)
+{
+    <img src="@c.Image" />
+}
+}
+
+<h3> Cards in computer's pile</h3>
+@if (Model.Player2.Pile.Count() > 0)
+{
+@foreach (var c in Model.Player2.Pile)
+{
+    <img src="@c.Image" />
+}
+}
