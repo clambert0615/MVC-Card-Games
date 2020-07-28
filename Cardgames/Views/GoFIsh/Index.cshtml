@@ -1,7 +1,16 @@
-﻿@model Match
+﻿<h1 style="text-align:center; color:lightseagreen">Welcome to Go Fish!</h1>
+<br />
+<br />
 
-<h3>Choose a card to ask the computer for:</h3>
-@foreach(var c in Model.Player1.CardList)
-{
-   <a href ="/GoFish/CardPick?value=@c.Value"><img src=@c.Image></a>
-}
+<h5>The rules are simple.  When it is your turn, click on a card that you would like to ask the computer for.
+    If the computer has the card, the pair will be added to your pile and you can go again. If the computer
+    does not have the card, you will "Go Fish" and draw a card.  If the card you draw matches a card in your hand,
+    it will be added to your pile, but it will still be the computer's turn.  The computer will then automatically do 
+    its turn.  The game is over when one of the players is out of cards in their hand.  Who ever has the most
+    pairs in their pile will win!
+    <br /><br />
+    Make sure to Register/Sign in to begin playing!<br /><br />
+    Click on the button to begin the game:<br /><br />
+    <input type="button" value="Start Game!" onclick="location.href='/GoFish/NewGame'" />
+    </h5>
+<img src="~/Images/fish.jpg" style="position:absolute; right:300px; bottom:150px; width:400px"/>
