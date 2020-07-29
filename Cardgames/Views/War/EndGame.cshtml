@@ -1,0 +1,28 @@
+﻿<h1 style="text-align:center; color:red"> Game Over!</h1>
+<br />
+<style>
+    .column {
+        float: left;
+        width: 50%;
+        padding: 10px;
+    }
+</style>
+<div class="row">
+    <div class="column">
+        <h2>@Model.Message</h2>
+        <br />
+        <h2>Play Again: <input type="button" value="Go" onclick="location.href='/War/WarNewGame'" /></h2>
+        <br />
+
+        <h3> View your statistics: <input type="button" value="View" onclick="location.href='/Home/Statistics'" /></h3><br />
+
+
+        <br />
+        <input type="button" value="Return to Main Menu" onclick="location.href='/Home/Index'" />
+    </div>
+    <div class="column">
+        <img src="~/Images/gameover.jpg" />
+
+    </div>
+</div>
+

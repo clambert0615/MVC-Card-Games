@@ -41,8 +41,8 @@ namespace Cardgames.Controllers
             var deck1 = await cd.GetDeck(1);
             DeckCards cards = await cd.GetCards(deck1.Deck_Id, 5);
             DeckCards cards2 = await cd.GetCards(deck1.Deck_Id, 5);
-            player1 = new Player1 { CardList = cards.Cards, Remaining = cards.Cards.Count };
-            player2 = new Player2 { CardList = cards2.Cards, Remaining = cards2.Cards.Count };
+            player1 = new Player1 { CardList = cards.Cards };
+            player2 = new Player2 { CardList = cards2.Cards };
             match = new Match { Player1 = player1, Player2 = player2, Carddeck = deck1 };
 
             DupeCheck(match.Player1.CardList, match.Player1.Pile);
@@ -111,7 +111,7 @@ namespace Cardgames.Controllers
         public async Task<IActionResult> CardPick2()
         {
             match = JsonConvert.DeserializeObject<Match>(HttpContext.Session.GetString("match"));
-                 deck1 = JsonConvert.DeserializeObject<DeckCards>(HttpContext.Session.GetString("deck1"));
+            deck1 = JsonConvert.DeserializeObject<DeckCards>(HttpContext.Session.GetString("deck1"));
             if (match.Player1.CardList.Count() > 0 && match.Player2.CardList.Count() > 0)
             { 
                 bool goAgain = true;
@@ -234,18 +234,18 @@ namespace Cardgames.Controllers
             return View(match);
 
         }
-        public IActionResult Statistics()
-        {
+        //public IActionResult Statistics()
+        //{
 
-            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var stats = _context.GoFish.Where(x => x.UserId == id).ToList();
-            foreach (var s in stats)
-            {
-                ViewBag.Wins = (ViewBag.Wins ?? 0) + (s.Wins ?? 0);
-                ViewBag.Losses = (ViewBag.Losses ?? 0) + (s.Losses ?? 0);
-                ViewBag.Ties = (ViewBag.Ties ?? 0) + (s.Ties ?? 0);
-            }
-            return View();
-        }
+        //    string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var stats = _context.GoFish.Where(x => x.UserId == id).ToList();
+        //    foreach (var s in stats)
+        //    {
+        //        ViewBag.Wins = (ViewBag.Wins ?? 0) + (s.Wins ?? 0);
+        //        ViewBag.Losses = (ViewBag.Losses ?? 0) + (s.Losses ?? 0);
+        //        ViewBag.Ties = (ViewBag.Ties ?? 0) + (s.Ties ?? 0);
+        //    }
+        //    return View();
+        //}
     }
 }

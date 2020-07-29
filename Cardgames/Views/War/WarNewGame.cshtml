@@ -1,0 +1,13 @@
+﻿@model Cardgames.Models.Match
+
+<h3>Click the button to turn over a card</h3>
+<br />
+
+@{ 
+    var card = Model.Player1.CardList[0];
+}
+<input type="button" value="Flip" onclick="location.href='/War/FlipCard?value=@card.Value'" />
+<br />
+<br />
+<br />
+<img src="~/Images/war.jpg" style="width:400px"/>

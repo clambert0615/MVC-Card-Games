@@ -43,6 +43,9 @@ namespace Cardgames.Models
         public int Remaining { get; set; }
         public List<Card> CardList { get; set; }
         public List<Card> Pile { get; set; } = new List<Card>();
+        public Card Flipped { get; set; }
+        public Card Middle { get; set; }
+        public Card Bottom { get; set;  }
     }
 
     public class Player2
@@ -50,6 +53,9 @@ namespace Cardgames.Models
         public List<Card> CardList { get; set; }
         public int Remaining { get; set; }
         public List<Card> Pile { get; set; } = new List<Card>();
+        public Card Computer { get; set; }
+        public Card Middle { get; set; }
+        public Card Bottom { get; set; }
     }
 
     

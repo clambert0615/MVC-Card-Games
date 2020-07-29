@@ -1,0 +1,15 @@
+﻿@model Cardgames.Models.Match
+
+<h3>Your Card:        <img src = @Model.Player1.Flipped.Image style="width:100px" ></h3>
+<h3>Cards left in your hand: @Model.Player1.CardList.Count() </h3>
+<h3>Computer's Card:  <img src = @Model.Player2.Computer.Image style="width:100px"></h3>
+<h3>Cards left in computer's hand: @Model.Player2.CardList.Count() </h3>
+<h3>@Model.Message</h3>
+<br />
+<h3>Click the button to turn over a card</h3>
+<br />
+
+@{
+    var card = Model.Player1.CardList[0];
+}
+<input type="button" value="Flip" onclick="location.href='/War/FlipCard?value=@card.Value'" />

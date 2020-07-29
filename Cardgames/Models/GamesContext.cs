@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Configuration;
 
 namespace Cardgames.Models
 {
@@ -10,11 +9,10 @@ namespace Cardgames.Models
         public GamesContext()
         {
         }
-        public IConfiguration Configuration;
-        public GamesContext(DbContextOptions<GamesContext> options, IConfiguration configuration)
+
+        public GamesContext(DbContextOptions<GamesContext> options)
             : base(options)
         {
-            Configuration = configuration;   
         }
 
         public virtual DbSet<AspNetRoleClaims> AspNetRoleClaims { get; set; }
@@ -25,13 +23,14 @@ namespace Cardgames.Models
         public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
         public virtual DbSet<GoFish> GoFish { get; set; }
+        public virtual DbSet<War> War { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=Games;Trusted_Connection=True;");
             }
         }
 
@@ -146,6 +145,16 @@ namespace Cardgames.Models
                     .WithMany(p => p.GoFish)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK__GoFish__UserId__4BAC3F29");
+            });
+
+            modelBuilder.Entity<War>(entity =>
+            {
+                entity.Property(e => e.UserId).HasMaxLength(450);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.War)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__War__UserId__5CD6CB2B");
             });
 
             OnModelCreatingPartial(modelBuilder);
