@@ -1,0 +1,26 @@
+﻿@model Cardgames.Models.Match
+
+<h1 style="text-align: center"> Match results</h1>
+
+<h2>@Model.Message</h2>
+
+<h3> Your cards are:</h3>
+@foreach (var c in Model.Player1.CardList)
+{
+    <img src=@c.Image style="width:100px" />
+
+}
+<br />
+<h3>Your Total: @Model.Player1.HandSum</h3>
+<br />
+<h3>Computer's cards are:</h3>
+@foreach (var c in Model.Player2.CardList)
+{
+    <img src=@c.Image style="width:100px" />
+
+}
+<br />
+<h3>Computer's Total: @Model.Player2.HandSum</h3>
+<br />
+<h2>Play Again: <input type="button" value="Go" onclick="location.href='/BlackJack/BJNewGame'" /></h2>
+<br />

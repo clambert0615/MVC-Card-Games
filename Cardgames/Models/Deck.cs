@@ -46,6 +46,7 @@ namespace Cardgames.Models
         public Card Flipped { get; set; }
         public Card Middle { get; set; }
         public Card Bottom { get; set;  }
+        public int HandSum { get; set; }
     }
 
     public class Player2
@@ -56,6 +57,7 @@ namespace Cardgames.Models
         public Card Computer { get; set; }
         public Card Middle { get; set; }
         public Card Bottom { get; set; }
+        public int HandSum { get; set; }
     }
 
     
