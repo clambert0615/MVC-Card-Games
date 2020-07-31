@@ -24,9 +24,10 @@ namespace Cardgames.Models
         public virtual DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
         public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
+        public virtual DbSet<BlackJack> BlackJack { get; set; }
         public virtual DbSet<GoFish> GoFish { get; set; }
         public virtual DbSet<War> War { get; set; }
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; private set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -135,6 +136,16 @@ namespace Cardgames.Models
                 entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
 
                 entity.Property(e => e.UserName).HasMaxLength(256);
+            });
+
+            modelBuilder.Entity<BlackJack>(entity =>
+            {
+                entity.Property(e => e.UserId).HasMaxLength(450);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.BlackJack)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__BlackJack__UserI__6FE99F9F");
             });
 
             modelBuilder.Entity<GoFish>(entity =>

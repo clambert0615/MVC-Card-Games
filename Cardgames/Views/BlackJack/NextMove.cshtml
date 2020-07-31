@@ -1,37 +1,51 @@
 ﻿@model Cardgames.Models.Match
 
-<h3>
-    Look at your cards and chose whether to stay or get another card. If you have an Ace decide if you want it
-    to be worth 1 or 11.
-</h3>
+    <style>
+        .column {
+            float: left;
+            width: 50%;
+            padding: 10px;
+        }
+    </style>
+    <h3>
+        Look at your cards and chose whether to stay or get another card. If you have an Ace decide if you want it
+        to be worth 1 or 11.
+    </h3>
+    <br />
+    <div class="row">
+        <div class="column">
+            <h3> Your cards are:</h3>
+            @foreach (var c in Model.Player1.CardList)
+            {
+                <img src=@c.Image style="width:100px" />
 
-<h3> Your cards are:</h3>
-@foreach (var c in Model.Player1.CardList)
-{
-    <img src=@c.Image style="width:100px" />
+            }
+            <br />
+        </div>
+        <div class="column">
+            <h3> Computer's Hidden Card: ?</h3>
+            <h3> Computer's card:</h3>
+            @for (int i = 1; i < Model.Player2.CardList.Count; i++)
+            {
+                <img src=@Model.Player2.CardList[i].Image style="width:100px" />
+            }
+        </div>
+    </div>
 
-}
-<br />
-<h3> Hidden Card: ?</h3>
-<h3> Computer's card:</h3>
-@for (int i = 1; i < Model.Player2.CardList.Count; i++)
-{
-    <img src=@Model.Player2.CardList[i].Image style="width:100px" />
-}
+    <br />
+    <form action="/BlackJack/NextMove" method="get">
+        Hit or Stay?:
+        <input type="radio" id="hit" name="decision" value="hit" />
+        <label for="hit"> Hit me</label>
+        <input type="radio" id="stay" name="decision" value="stay" />
+        <label for="stay"> Stay</label><br />
+        Ace: 1 or 11?:
+        <input type="radio" id="one" name="acechoice" value="1" />
+        <label for="one">1</label>
+        <input type="radio" id="eleven" name="acechoice" value="11" />
+        <label for="eleven">11</label><br />
+        <input type="submit" value="submit" />
 
-
-<br />
-<form action="/BlackJack/NextMove" method="get">
-    <input type="radio" id="hit" name="decision" value="hit" />
-    <label for="hit"> Hit me</label><br />
-    <input type="radio" id="stay" name="decision" value="stay" />
-    <label for="stay"> Stay</label><br />
-    <input type="radio" id="one" name="acechoice" value="1" />
-    <label for="one">1</label><br />
-    <input type="radio" id="eleven" name="acechoice" value="11" />
-    <label for="eleven">11</label><br />
-    <input type="submit" value="submit" />
-
-</form>
+    </form>
 
 

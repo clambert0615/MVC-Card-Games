@@ -216,7 +216,7 @@ namespace Cardgames.Controllers
                     _context.War.Add(results);
                     _context.SaveChanges();
                 }
-                match.Message = "Game over: You won!!";
+                match.Message = "Game Over: You Won!!";
                 return View(match);
             }
             else
@@ -232,7 +232,7 @@ namespace Cardgames.Controllers
                     _context.War.Add(results);
                     _context.SaveChanges();
                 }
-                match.Message = "Game over: You lost, better luck next time";
+                match.Message = "Game Over: You Lost, Better Luck Next Time";
                 return View(match);
             }
         }

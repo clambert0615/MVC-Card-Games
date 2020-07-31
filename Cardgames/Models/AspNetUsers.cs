@@ -11,6 +11,7 @@ namespace Cardgames.Models
             AspNetUserLogins = new HashSet<AspNetUserLogins>();
             AspNetUserRoles = new HashSet<AspNetUserRoles>();
             AspNetUserTokens = new HashSet<AspNetUserTokens>();
+            BlackJack = new HashSet<BlackJack>();
             GoFish = new HashSet<GoFish>();
             War = new HashSet<War>();
         }
@@ -35,6 +36,7 @@ namespace Cardgames.Models
         public virtual ICollection<AspNetUserLogins> AspNetUserLogins { get; set; }
         public virtual ICollection<AspNetUserRoles> AspNetUserRoles { get; set; }
         public virtual ICollection<AspNetUserTokens> AspNetUserTokens { get; set; }
+        public virtual ICollection<BlackJack> BlackJack { get; set; }
         public virtual ICollection<GoFish> GoFish { get; set; }
         public virtual ICollection<War> War { get; set; }
     }

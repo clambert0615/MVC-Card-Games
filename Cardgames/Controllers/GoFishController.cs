@@ -234,18 +234,6 @@ namespace Cardgames.Controllers
             return View(match);
 
         }
-        //public IActionResult Statistics()
-        //{
-
-        //    string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    var stats = _context.GoFish.Where(x => x.UserId == id).ToList();
-        //    foreach (var s in stats)
-        //    {
-        //        ViewBag.Wins = (ViewBag.Wins ?? 0) + (s.Wins ?? 0);
-        //        ViewBag.Losses = (ViewBag.Losses ?? 0) + (s.Losses ?? 0);
-        //        ViewBag.Ties = (ViewBag.Ties ?? 0) + (s.Ties ?? 0);
-        //    }
-        //    return View();
-        //}
+        
     }
 }

@@ -46,6 +46,14 @@ namespace Cardgames.Controllers
                 ViewBag.WarLosses = (ViewBag.WarLosses ?? 0) + (s.Losses ?? 0);
                 
             }
+
+            var blackJackStats = _context.BlackJack.Where(x => x.UserId == id).ToList();
+            foreach (var s in blackJackStats)
+            {
+                ViewBag.BJWins = (ViewBag.BJWins ?? 0) + (s.Wins ?? 0);
+                ViewBag.BJLosses = (ViewBag.BJLosses ?? 0) + (s.Losses ?? 0);
+                ViewBag.BJTies = (ViewBag.BJTies ?? 0) + (s.Ties ?? 0);
+            }
             return View();
         }
 

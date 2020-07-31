@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Cardgames.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -21,7 +23,7 @@ namespace Cardgames.Controllers
         public Player1 player1;
         public Player2 player2;
         public DeckCards deck1;
-       
+
         public IActionResult BJIndex()
         {
             return View();
@@ -39,12 +41,14 @@ namespace Cardgames.Controllers
             return RedirectToAction("FirstMove", match);
 
         }
+        [Authorize]
         public IActionResult FirstMove()
         {
             match = JsonConvert.DeserializeObject<Match>(HttpContext.Session.GetString("match"));
             deck1 = JsonConvert.DeserializeObject<DeckCards>(HttpContext.Session.GetString("deck1"));
             return View(match);
         }
+        [Authorize]
         public async Task<IActionResult> NextMove(string decision, string acechoice)
         {
             match = JsonConvert.DeserializeObject<Match>(HttpContext.Session.GetString("match"));
@@ -67,16 +71,16 @@ namespace Cardgames.Controllers
                 {
                     aceValue = Convert.ToInt32(acechoice);
                 }
-                else 
+                else
                 {
                     ConvertFaceCards(c);
                     cardValue = Convert.ToInt32(c.Value);
-                    sumOfCards += (cardValue + aceValue);
+                    sumOfCards += cardValue;
                 }
-               
+
             }
-          
-            match.Player1.HandSum = sumOfCards;
+
+            match.Player1.HandSum = sumOfCards + aceValue;
 
             foreach (Card c in match.Player2.CardList)
             {
@@ -89,7 +93,7 @@ namespace Cardgames.Controllers
                 }
                 else
                 {
-                    if (sumOfCards2 >= 10)
+                    if (sumOfCards2 > 10)
                     {
                         aceValue2 = 1;
                     }
@@ -103,43 +107,48 @@ namespace Cardgames.Controllers
 
             if (decision == "stay")
             {
-                
-                    if (match.Player2.HandSum > 16)
-                    {
-                        
-                        HttpContext.Session.SetString("match", JsonConvert.SerializeObject(match));
-                        HttpContext.Session.SetString("deck1", JsonConvert.SerializeObject(deck1));
-                        return RedirectToAction("GameOver", match);
-                    }
-                    else
-                    {
-                        DeckCards card = await cd.GetCards(deck1.Deck_Id, 1);
-                        match.Player2.CardList.Add(card.Cards[0]);
-                        foreach (Card c in match.Player2.CardList)
-                        {
-                            if (c.Value != "ACE")
-                            {
 
-                                ConvertFaceCards(c);
-                                cardValue3 = Convert.ToInt32(c.Value);
-                                sumOfCards3 += cardValue3;
+                if (match.Player2.HandSum > 16)
+                {
+
+                    HttpContext.Session.SetString("match", JsonConvert.SerializeObject(match));
+                    HttpContext.Session.SetString("deck1", JsonConvert.SerializeObject(deck1));
+                    return RedirectToAction("GameOver", match);
+                }
+                else
+                {
+                    DeckCards card = await cd.GetCards(deck1.Deck_Id, 1);
+                    match.Player2.CardList.Add(card.Cards[0]);
+                    foreach (Card c in match.Player2.CardList)
+                    {
+                        if (c.Value != "ACE")
+                        {
+
+                            ConvertFaceCards(c);
+                            cardValue3 = Convert.ToInt32(c.Value);
+                            sumOfCards3 += cardValue3;
+                        }
+                    }
+                    foreach (Card c in match.Player2.CardList)
+                    {
+                        if (c.Value == "ACE")
+                        {
+                            if (sumOfCards3 > 10)
+                            {
+                                aceValue3 = 1;
                             }
                             else
                             {
-                                if (sumOfCards3 >= 10)
-                                {
-                                    aceValue3 = 1;
-                                }
-                                else
-                                {
-                                    aceValue3 = 11;
-                                }
+                                aceValue3 = 11;
                             }
                         }
-                        match.Player2.HandSum = sumOfCards3 + aceValue3;
-                        
                     }
-                match.Player1.HandSum = sumOfCards;
+
+                }
+                match.Player2.HandSum = sumOfCards3 + aceValue3;
+
+
+                match.Player1.HandSum = sumOfCards + aceValue;
                 HttpContext.Session.SetString("match", JsonConvert.SerializeObject(match));
                 HttpContext.Session.SetString("deck1", JsonConvert.SerializeObject(deck1));
                 return RedirectToAction("GameOver", match);
@@ -161,9 +170,12 @@ namespace Cardgames.Controllers
                             int cvalue = Convert.ToInt32(c.Value);
                             sumOfCards4 += cvalue;
                         }
-                       else
+                    }
+                    foreach (Card c in match.Player2.CardList)
+                    {
+                        if (c.Value == "ACE")
                         {
-                            if (sumOfCards4 >= 10)
+                            if (sumOfCards4 > 10)
                             {
                                 aceValue4 = 1;
                             }
@@ -185,16 +197,19 @@ namespace Cardgames.Controllers
                         }
 
                     }
-                    match.Player1.HandSum = sumOfCards5;
+                    match.Player1.HandSum = sumOfCards5 + aceValue;
 
-                        if (match.Player2.HandSum >= 21 || match.Player1.HandSum >= 20)
+                    if (match.Player2.HandSum >= 21 || match.Player1.HandSum >= 20)
                     {
+
                         HttpContext.Session.SetString("match", JsonConvert.SerializeObject(match));
                         HttpContext.Session.SetString("deck1", JsonConvert.SerializeObject(deck1));
                         return RedirectToAction("GameOver", match);
                     }
+
                     else
                     {
+
                         HttpContext.Session.SetString("match", JsonConvert.SerializeObject(match));
                         HttpContext.Session.SetString("deck1", JsonConvert.SerializeObject(deck1));
                         return View(match);
@@ -208,29 +223,73 @@ namespace Cardgames.Controllers
                 }
             }
         }
-
+        [Authorize]
         public IActionResult GameOver()
         {
             match = JsonConvert.DeserializeObject<Match>(HttpContext.Session.GetString("match"));
             deck1 = JsonConvert.DeserializeObject<DeckCards>(HttpContext.Session.GetString("deck1"));
-            if((match.Player1.HandSum > match.Player2.HandSum && match.Player1.HandSum <= 21 )|| match.Player2.HandSum > 21 )
+            if ((match.Player1.HandSum > match.Player2.HandSum && match.Player1.HandSum <= 21) || (match.Player2.HandSum > 21 && match.Player1.HandSum <= 21))
             {
-                match.Message = "You win!";
+                string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                BlackJack results = new BlackJack
+                {
+                    UserId = id,
+                    Wins = 1
+                };
+                if (ModelState.IsValid)
+                {
+                    _context.BlackJack.Add(results);
+                    _context.SaveChanges();
+                }
+                match.Message = "Game Over: You Won!";
                 return View(match);
             }
-            else if((match.Player1.HandSum < match.Player2.HandSum && match.Player2.HandSum <= 21) || match.Player1.HandSum > 21)
+            else if ((match.Player1.HandSum < match.Player2.HandSum && match.Player2.HandSum <= 21) || (match.Player1.HandSum > 21 && match.Player2.HandSum <= 21))
             {
-                match.Message = "You Lose, better luck next time";
+                string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                BlackJack results = new BlackJack
+                {
+                    UserId = id,
+                    Losses = 1
+                };
+                if (ModelState.IsValid)
+                {
+                    _context.BlackJack.Add(results);
+                    _context.SaveChanges();
+                }
+                match.Message = "Game Over: You Lost, Better Luck Next Time";
                 return View(match);
             }
-            else if(match.Player1.HandSum > 21 && match.Player2.HandSum > 21)
+            else if (match.Player1.HandSum > 21 && match.Player2.HandSum > 21)
             {
-                match.Message = "You both lost";
+                string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                BlackJack results = new BlackJack
+                {
+                    UserId = id,
+                    Losses = 1
+                };
+                if (ModelState.IsValid)
+                {
+                    _context.BlackJack.Add(results);
+                    _context.SaveChanges();
+                }
+                match.Message = "Game Over: You Both Lost";
                 return View(match);
             }
             else
             {
-                match.Message = "You tied";
+                string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                BlackJack results = new BlackJack
+                {
+                    UserId = id,
+                    Ties = 1
+                };
+                if (ModelState.IsValid)
+                {
+                    _context.BlackJack.Add(results);
+                    _context.SaveChanges();
+                }
+                match.Message = "Game Over: You Tied";
                 return View(match);
             }
         }
