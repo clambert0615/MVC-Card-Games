@@ -7,6 +7,7 @@ using Cardgames.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
 
 namespace Cardgames.Controllers
@@ -55,16 +56,9 @@ namespace Cardgames.Controllers
             deck1 = JsonConvert.DeserializeObject<DeckCards>(HttpContext.Session.GetString("deck1"));
             int sumOfCards = 0;
             int aceValue = 0;
-            int sumOfCards2 = 0;
-            int aceValue2 = 0;
-            int sumOfCards3 = 0;
-            int sumOfCards4 = 0;
-            int aceValue3 = 0;
-            int aceValue4 = 0;
             int sumOfCards5 = 0;
-            int cardValue = 0;
-            int cardValue2 = 0;
-            int cardValue3 = 0;
+            int cardValue;
+
             foreach (Card c in match.Player1.CardList)
             {
                 if (c.Value == "ACE")
@@ -81,29 +75,7 @@ namespace Cardgames.Controllers
             }
 
             match.Player1.HandSum = sumOfCards + aceValue;
-
-            foreach (Card c in match.Player2.CardList)
-            {
-                if (c.Value != "ACE")
-                {
-
-                    ConvertFaceCards(c);
-                    cardValue2 = Convert.ToInt32(c.Value);
-                    sumOfCards2 += cardValue2;
-                }
-                else
-                {
-                    if (sumOfCards2 > 10)
-                    {
-                        aceValue2 = 1;
-                    }
-                    else
-                    {
-                        aceValue2 = 11;
-                    }
-                }
-            }
-            match.Player2.HandSum = sumOfCards2 + aceValue2;
+            GetPlayer2Sum(match.Player2.CardList);
 
             if (decision == "stay")
             {
@@ -119,39 +91,13 @@ namespace Cardgames.Controllers
                 {
                     DeckCards card = await cd.GetCards(deck1.Deck_Id, 1);
                     match.Player2.CardList.Add(card.Cards[0]);
-                    foreach (Card c in match.Player2.CardList)
-                    {
-                        if (c.Value != "ACE")
-                        {
+                    GetPlayer2Sum(match.Player2.CardList);
 
-                            ConvertFaceCards(c);
-                            cardValue3 = Convert.ToInt32(c.Value);
-                            sumOfCards3 += cardValue3;
-                        }
-                    }
-                    foreach (Card c in match.Player2.CardList)
-                    {
-                        if (c.Value == "ACE")
-                        {
-                            if (sumOfCards3 > 10)
-                            {
-                                aceValue3 = 1;
-                            }
-                            else
-                            {
-                                aceValue3 = 11;
-                            }
-                        }
-                    }
-
+                    match.Player1.HandSum = sumOfCards + aceValue;
+                    HttpContext.Session.SetString("match", JsonConvert.SerializeObject(match));
+                    HttpContext.Session.SetString("deck1", JsonConvert.SerializeObject(deck1));
+                    return RedirectToAction("GameOver", match);
                 }
-                match.Player2.HandSum = sumOfCards3 + aceValue3;
-
-
-                match.Player1.HandSum = sumOfCards + aceValue;
-                HttpContext.Session.SetString("match", JsonConvert.SerializeObject(match));
-                HttpContext.Session.SetString("deck1", JsonConvert.SerializeObject(deck1));
-                return RedirectToAction("GameOver", match);
             }
             else
             {
@@ -161,31 +107,7 @@ namespace Cardgames.Controllers
                     match.Player1.CardList.Add(card.Cards[0]);
                     DeckCards card2 = await cd.GetCards(deck1.Deck_Id, 1);
                     match.Player2.CardList.Add(card2.Cards[0]);
-                    foreach (Card c in match.Player2.CardList)
-                    {
-                        if (c.Value != "ACE")
-                        {
-
-                            ConvertFaceCards(c);
-                            int cvalue = Convert.ToInt32(c.Value);
-                            sumOfCards4 += cvalue;
-                        }
-                    }
-                    foreach (Card c in match.Player2.CardList)
-                    {
-                        if (c.Value == "ACE")
-                        {
-                            if (sumOfCards4 > 10)
-                            {
-                                aceValue4 = 1;
-                            }
-                            else
-                            {
-                                aceValue4 = 11;
-                            }
-                        }
-                    }
-                    match.Player2.HandSum = sumOfCards4 + aceValue4;
+                    GetPlayer2Sum(match.Player2.CardList);
                     foreach (Card c in match.Player1.CardList)
                     {
                         if (c.Value != "ACE")
@@ -314,6 +236,39 @@ namespace Cardgames.Controllers
                 return cardToConvert.Value;
             }
         }
+        public int GetPlayer2Sum(List<Card> cards)
+        {
+            int cardValue2;
+            int sumOfCards2 = 0;
+            int aceValue2 = 0;
+                foreach (Card c in cards)
+                {
+                    if (c.Value != "ACE")
+                    {
 
+                        ConvertFaceCards(c);
+                        cardValue2 = Convert.ToInt32(c.Value);
+                        sumOfCards2 += cardValue2;
+                    }
+                }
+                foreach (Card c in cards)
+                {
+                    if (c.Value == "ACE")
+                    {
+                        if (sumOfCards2 > 10)
+                        {
+                            aceValue2 = 1;
+                        }
+                        else
+                        {
+                            aceValue2 = 11;
+                        }
+                    }
+                }
+
+            
+           return match.Player2.HandSum = sumOfCards2 + aceValue2;
+
+        }
     }
 }
